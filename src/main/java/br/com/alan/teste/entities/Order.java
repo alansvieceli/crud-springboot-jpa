@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -35,9 +37,12 @@ public class Order implements Serializable {
 	@ManyToOne // muitos para um
 	@JoinColumn(name = "clientId") // nome da chave estrangeiro eu escolho o nome
 	private User client;
-	
-	@OneToMany(mappedBy = "id.order") //id(OrderItemPK).order
+
+	@OneToMany(mappedBy = "id.order") // id(OrderItemPK).order
 	private Set<OrderItem> items = new HashSet<>();
+
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL) //
+	private Payment payment;
 
 	public Order() {
 
@@ -47,7 +52,7 @@ public class Order implements Serializable {
 		this.id = id;
 		this.moment = moment;
 		this.setOrderStatus(orderStatus);
-		this.client = client;		
+		this.client = client;
 	}
 
 	public Long getId() {
@@ -86,6 +91,23 @@ public class Order implements Serializable {
 
 	public Set<OrderItem> getItems() {
 		return items;
+	}
+
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
+
+	public Double getTotal() {
+		double total = 0;
+		for (OrderItem orderItem : items) {
+			total += orderItem.getSubTotal();
+		}
+
+		return total;
 	}
 
 	@Override

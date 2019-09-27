@@ -47,6 +47,10 @@ public class OrderItem implements Serializable {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
+	
+	public Double getSubTotal() {
+		return price * quantity;
+	}
 
 	@JsonIgnore //esse cara q faz da o erro de loop eterno
 	public Order getOrder() {
@@ -64,7 +68,7 @@ public class OrderItem implements Serializable {
 	public void setProduct(Product product) {
 		this.id.setProduct(product);
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
