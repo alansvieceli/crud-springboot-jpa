@@ -8,15 +8,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name = "TB_PRODUCT")
-public class Product implements Serializable{
+public class Product implements Serializable {
 
 	private static final long serialVersionUID = 8659755704402623853L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -24,12 +26,17 @@ public class Product implements Serializable{
 	private String description;
 	private Double price;
 	private String imgUri;
-	
-	@Transient //JPA não interpreta
-	private Set<Category> categories = new HashSet<>(); //gerante q não vai ter mais de uma categoria igual
-	
+
+	// @Transient //JPA não interpreta
+	@ManyToMany
+	@JoinTable(                                                // associação de muitos para muitos
+			name = "tb_product_category",                      // nome da tabelz q eu quiser
+			joinColumns = @JoinColumn(name = "product_id"),          // product_id eu criei, pode ser qualquer nome q eu quiser
+			inverseJoinColumns = @JoinColumn(name = "category_id")) // category_id eu criei, pode ser qualquer nome q eu quiser, ele vai pegar do q tem dentro do <> e jogar ali
+	private Set<Category> categories = new HashSet<>();             // gerante q não vai ter mais de uma categoria igual
+
 	public Product() {
-		
+
 	}
 
 	public Product(Long id, String name, String description, Double price, String imgUri) {
