@@ -13,6 +13,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import br.com.alan.teste.entities.enums.OrderStatus;
+
 @Entity
 @Table(name = "TB_ORDER")
 public class Order implements Serializable {
@@ -22,8 +24,11 @@ public class Order implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
 	private Instant moment;
+	private Integer orderStatus;
+
 	@ManyToOne // muitos para um
 	@JoinColumn(name = "clientId") // nome da chave estrangeiro eu escolho o nome
 	private User client;
@@ -32,10 +37,11 @@ public class Order implements Serializable {
 
 	}
 
-	public Order(Long id, Instant moment, User client) {
+	public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
 		this.id = id;
 		this.moment = moment;
-		this.client = client;
+		this.setOrderStatus(orderStatus);
+		this.client = client;		
 	}
 
 	public Long getId() {
@@ -52,6 +58,16 @@ public class Order implements Serializable {
 
 	public void setMoment(Instant instant) {
 		this.moment = instant;
+	}
+
+	public OrderStatus getOrderStatus() {
+		return OrderStatus.valueOf(orderStatus);
+	}
+
+	public void setOrderStatus(OrderStatus orderStatus) {
+		if (orderStatus != null) {
+			this.orderStatus = orderStatus.getCode();
+		}
 	}
 
 	public User getClient() {
