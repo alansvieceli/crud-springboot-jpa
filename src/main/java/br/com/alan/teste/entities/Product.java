@@ -11,7 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "TB_PRODUCT")
@@ -35,6 +38,9 @@ public class Product implements Serializable {
 			inverseJoinColumns = @JoinColumn(name = "category_id")) // category_id eu criei, pode ser qualquer nome q eu quiser, ele vai pegar do q tem dentro do <> e jogar ali
 	private Set<Category> categories = new HashSet<>();             // gerante q não vai ter mais de uma categoria igual
 
+	@OneToMany(mappedBy = "id.product") //id(OrderItemPK).order
+	private Set<OrderItem> items = new HashSet<>(); 
+	
 	public Product() {
 
 	}
@@ -86,6 +92,15 @@ public class Product implements Serializable {
 	public void setImgUri(String imgUri) {
 		this.imgUri = imgUri;
 	}
+	
+	@JsonIgnore
+	public Set<Order> getOrders() {
+		Set<Order> orders = new HashSet<>();
+		for (OrderItem item: items) {
+			orders.add(item.getOrder());
+		}
+		return orders;
+	}	
 
 	@Override
 	public int hashCode() {

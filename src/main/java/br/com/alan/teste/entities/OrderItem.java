@@ -52,11 +52,11 @@ public class OrderItem implements Serializable {
 	public Order getOrder() {
 		return id.getOrder();
 	}
-
+	
 	public void setOrder(Order order) {
 		this.id.setOrder(order);
 	}
-
+	
 	public Product getProduct() {
 		return id.getProduct();
 	}
